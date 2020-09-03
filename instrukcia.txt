@@ -1,0 +1,4 @@
+EMGU:
+1) Установить opencv
+2) Установить EMGU.CV
+3) cvextern.dll из EMGU.CV закинуть в bin
