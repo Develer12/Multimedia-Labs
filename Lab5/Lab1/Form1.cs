@@ -14,45 +14,61 @@ namespace Lab1
         {
             InitializeComponent();
 
-            this.imageBox1.Image = imgGray;
+            this.imageBox1.Image = new Image<Bgr, byte>("D:/Subject/MultiMedia/Lab/Lab5/Lab1/money.jpg");
 
 
             // Task 1
             var img1 = new Image<Gray, float>(imgGray.Size);
-            CvInvoke.CornerHarris(imgGray, img1, 2);
-            var img1c = img1.Convert<Gray, byte>().ThresholdBinary(new Gray(47), new Gray(255));
-            this.imageBox1.Image = imgGray;
+            CvInvoke.MedianBlur(img1, img1, 3);
+            CvInvoke.CornerHarris(imgGray, img1, 3, 7);
+            var img1c = img1.Convert<Gray, byte>().ThresholdBinary(new Gray(50), new Gray(255));
             this.imageBox2.Image = img1c;
 
 
 
             // Task 2
-            var img2 = imgGray.Copy();
-            var img2c = img2.Convert<Gray, byte>().ThresholdBinary(new Gray(87), new Gray(255));
-            foreach (var mKeyPoint in new GFTTDetector(1000).Detect(img2c))
+            var img2 = new Image<Bgr, byte>("D:/Subject/MultiMedia/Lab/Lab5/Lab1/money.jpg");
+            var img2c = img2.Convert<Gray, byte>().ThresholdBinary(new Gray(9), new Gray(255));
+            foreach (var mKeyPoint in new GFTTDetector(1000, 0.1, 1, 5, true).Detect(img2))
             {
-                img2.Draw(new CircleF(mKeyPoint.Point, 1), new Gray(250), 1);
+
+                img2.Draw(new CircleF(mKeyPoint.Point, mKeyPoint.Size), new Bgr(0, 255, 0), 1);
             }
 
             this.imageBox3.Image = img2;
 
 
             // Task 3
-            var img3 = imgGray.Copy();
-            var img3c = imgGray.Copy();
+            var img3 = new Image<Bgr, byte>("D:/Subject/MultiMedia/Lab/Lab5/Lab1/money1.jpg");
+            var img3c = img3.Copy();
             PointF[] srcs = new PointF[4];
             srcs[0] = new PointF(100, 300);
-            srcs[1] = new PointF(410, 163);
-            srcs[2] = new PointF(311, 35);
-            srcs[3] = new PointF(46, 129);
+            srcs[1] = new PointF(410, 150);
+            srcs[2] = new PointF(300, 50);
+            srcs[3] = new PointF(50, 150);
 
 
             PointF[] dsts = new PointF[4];
-            dsts[0] = new PointF(0, 300);
-            dsts[1] = new PointF(400, 300);
-            dsts[2] = new PointF(400, 0);
-            dsts[3] = new PointF(0, 0);
+            dsts[0] = new PointF(10, 300);
+            dsts[1] = new PointF(410, 150);
+            dsts[2] = new PointF(300, 50);
+            dsts[3] = new PointF(50, 150);
             Mat mywarpmat = CvInvoke.GetPerspectiveTransform(srcs, dsts);
+
+            //fix
+
+            srcs[0] = new PointF(10, 300);
+            srcs[1] = new PointF(410, 150);
+            srcs[2] = new PointF(300, 50);
+            srcs[3] = new PointF(50, 150);
+
+            dsts[0] = new PointF(10, 300);
+            dsts[1] = new PointF(410, 150);
+            dsts[2] = new PointF(300, 50);
+            dsts[3] = new PointF(50, 150);
+            mywarpmat = CvInvoke.GetPerspectiveTransform(srcs, dsts);
+            
+
             CvInvoke.WarpPerspective(img3, img3c, mywarpmat, img3.Size);
             this.imageBox4.Image = img3c;
         }
